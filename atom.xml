@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>seeyoubug</title>
+  
+  <subtitle>欲泪成雪</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://seeyoubug.com/"/>
+  <updated>2019-09-10T07:29:28.555Z</updated>
+  <id>http://seeyoubug.com/</id>
+  
+  <author>
+    <name>seeyoubug</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://seeyoubug.com/2019/08/15/hello-world/"/>
+    <id>http://seeyoubug.com/2019/08/15/hello-world/</id>
+    <published>2019-08-15T06:25:59.000Z</published>
+    <updated>2019-09-10T07:29:28.555Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="软件使用技巧" scheme="http://seeyoubug.com/categories/%E8%BD%AF%E4%BB%B6%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/"/>
+    
+    
+      <category term="Software" scheme="http://seeyoubug.com/tags/Software/"/>
+    
+      <category term="Commands" scheme="http://seeyoubug.com/tags/Commands/"/>
+    
+      <category term="常用命令" scheme="http://seeyoubug.com/tags/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    
+  </entry>
+  
+</feed>
