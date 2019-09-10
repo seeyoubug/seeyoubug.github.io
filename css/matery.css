@@ -365,8 +365,8 @@ header .go-back i {
 }
 
 .bg-cover:after {
-    -webkit-animation: rainbow 60s infinite;
-    animation: rainbow 60s infinite;
+    /* -webkit-animation: rainbow 60s infinite;
+    animation: rainbow 60s infinite; */
 }
 
 .bg-cover:before, .bg-cover:after {
@@ -405,7 +405,7 @@ header .go-back i {
     font-size: 1.9rem;
 }
 
-@-webkit-keyframes rainbow-no {
+@-webkit-keyframes rainbow {
     0%,
     100% {
         background: rgba(156, 39, 176, 0.75);
@@ -445,7 +445,7 @@ header .go-back i {
     }
 }
 
-@keyframes rainbow-no {
+@keyframes rainbow {
     0%,
     100% {
         background: rgba(156, 39, 176, 0.75);
