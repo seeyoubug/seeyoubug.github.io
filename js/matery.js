@@ -141,145 +141,140 @@ $(function () {
 });
 
 
-// <!--start-SnowEffect-->
+//  start snow effect
+(function SnowModule(factory) {
+	"use strict";
+	if(typeof define === "function" && define.amd) {
+		define(factory);
+	} else if(typeof module != "undefined" && typeof module.exports != "undefined") {
+		module.exports = factory();
+	} else if(typeof Package !== "undefined") {
+		Snow = factory();
+	} else {
+		window["Snow"] = factory();
+	}
+})(function SnowFactory() {
+	"use strict";
+	function Snow(option) {
+		option = option || {};
+		this.snowmax = option.snowmax || 100;
+		this.snowcolor = option.snowcolor || new Array("#FFDA65", "#00AADD", "#aaaacc", "#ddddff", "#ccccdd", "#f3f3f3", "#f0ffff", "#bbf7f9");
+		this.snowtype = option.snowtype || new Array("Times", "Arial", "Times", "Verdana");
+		this.snowletter = option.snowletter || "*";
+		this.sinkspeed = option.sinkspeed || 0.6;
+		this.snowmaxsize = option.snowmaxsize || 30;
+		this.snowminsize = option.snowminsize || 8;
+		this.snowingzone = option.snowingzone || 1;
+		this.snow = new Array();
+		this.marginbottom;
+		this.marginright;
+		this.timer;
+		this.i_snow = 0;
+		this.x_mv = new Array();
+		this.crds = new Array();
+		this.lftrght = new Array();
+		this.browserinfos = window.navigator.userAgent;
+		this.ie5 = document.all && document.getElementById && !this.browserinfos.match(/Opera/);
+		this.ns6 = document.getElementById && !document.all;
+		this.opera = this.browserinfos.match(/Opera/);
+		this.browserok = this.ie5 || this.ns6 || this.opera;
 
-			(function SnowModule(factory) {
-				"use strict";
-				if(typeof define === "function" && define.amd) {
-					define(factory);
-				} else if(typeof module != "undefined" && typeof module.exports != "undefined") {
-					module.exports = factory();
-				} else if(typeof Package !== "undefined") {
-					Snow = factory();
-				} else {
-					window["Snow"] = factory();
-				}
-			})(function SnowFactory() {
-				"use strict";
-				function Snow(option) {
-					option = option || {};
-					this.snowmax = option.snowmax || 100;
-					this.snowcolor = option.snowcolor || new Array("#FFDA65", "#00AADD", "#aaaacc", "#ddddff", "#ccccdd", "#f3f3f3", "#f0ffff", "#bbf7f9");
-					this.snowtype = option.snowtype || new Array("Times", "Arial", "Times", "Verdana");
-					this.snowletter = option.snowletter || "*";
-					this.sinkspeed = option.sinkspeed || 0.6;
-					this.snowmaxsize = option.snowmaxsize || 30;
-					this.snowminsize = option.snowminsize || 8;
-					this.snowingzone = option.snowingzone || 1;
-					this.snow = new Array();
-					this.marginbottom;
-					this.marginright;
-					this.timer;
-					this.i_snow = 0;
-					this.x_mv = new Array();
-					this.crds = new Array();
-					this.lftrght = new Array();
-					this.browserinfos = window.navigator.userAgent;
-					this.ie5 = document.all && document.getElementById && !this.browserinfos.match(/Opera/);
-					this.ns6 = document.getElementById && !document.all;
-					this.opera = this.browserinfos.match(/Opera/);
-					this.browserok = this.ie5 || this.ns6 || this.opera;
+		this.startSnow();
+	}
+	Snow.prototype.randommaker = function(range) {
+		var rand = Math.floor(range * Math.random());
+		return rand;
+	}
+	Snow.prototype.initsnow = function() {
+		if(this.ie5 || this.opera) {
+			this.marginbottom = document.body.scrollHeight;
+			this.marginright = document.body.clientWidth - 15;
+		} else if(this.ns6) {
+			this.marginbottom = document.body.scrollHeight;
+			this.marginright = window.innerWidth - 15;
+		}
+		this.snowsizerange = this.snowmaxsize - this.snowminsize;
+		for(var i = 0; i <= this.snowmax; i++) {
+			this.crds[i] = 0;
+			this.lftrght[i] = Math.random() * 15;
+			this.x_mv[i] = 0.03 + Math.random() / 10;
+			this.snow[i] = document.getElementById("s" + i);
+			this.snow[i].style.fontFamily = this.snowtype[this.randommaker(this.snowtype.length)];
+			this.snow[i].size = this.randommaker(this.snowsizerange) + this.snowminsize;
+			this.snow[i].style.fontSize = this.snow[i].size + 'px';
+			this.snow[i].style.color = this.snowcolor[this.randommaker(this.snowcolor.length)];
+			this.snow[i].style.zIndex = 1000;
+			this.snow[i].sink = this.sinkspeed * this.snow[i].size / 5;
+			if(this.snowingzone == 1) {
+				this.snow[i].posx = this.randommaker(this.marginright - this.snow[i].size)
+			}
+			if(this.snowingzone == 2) {
+				this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size)
+			}
+			if(this.snowingzone == 3) {
+				this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 4
+			}
+			if(this.snowingzone == 4) {
+				this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 2
+			}
+			this.snow[i].posy = this.randommaker(2 * this.marginbottom - this.marginbottom - 2 * this.snow[i].size);
+			this.snow[i].style.left = this.snow[i].posx + 'px';
+			this.snow[i].style.top = this.snow[i].posy + 'px';
+		}
+		this.movesnow();
+	}
+	Snow.prototype.movesnow = function() {
+		for(var i = 0; i <= this.snowmax; i++) {
+			this.crds[i] += this.x_mv[i];
+			this.snow[i].posy += this.snow[i].sink;
+			this.snow[i].style.left = this.snow[i].posx + this.lftrght[i] * Math.sin(this.crds[i]) + 'px';
+			this.snow[i].style.top = this.snow[i].posy + 'px';
 
-					this.startSnow();
+			if(this.snow[i].posy >= this.marginbottom - 2 * this.snow[i].size || parseInt(this.snow[i].style.left) > (this.marginright - 3 * this.lftrght[i])) {
+				if(this.snowingzone == 1) {
+					this.snow[i].posx = this.randommaker(this.marginright - this.snow[i].size)
 				}
-				Snow.prototype.randommaker = function(range) {
-					var rand = Math.floor(range * Math.random());
-					return rand;
+				if(this.snowingzone == 2) {
+					this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size)
 				}
-				Snow.prototype.initsnow = function() {
-					if(this.ie5 || this.opera) {
-						this.marginbottom = document.body.scrollHeight;
-						this.marginright = document.body.clientWidth - 15;
-					} else if(this.ns6) {
-						this.marginbottom = document.body.scrollHeight;
-						this.marginright = window.innerWidth - 15;
-					}
-					this.snowsizerange = this.snowmaxsize - this.snowminsize;
-					for(var i = 0; i <= this.snowmax; i++) {
-						this.crds[i] = 0;
-						this.lftrght[i] = Math.random() * 15;
-						this.x_mv[i] = 0.03 + Math.random() / 10;
-						this.snow[i] = document.getElementById("s" + i);
-						this.snow[i].style.fontFamily = this.snowtype[this.randommaker(this.snowtype.length)];
-						this.snow[i].size = this.randommaker(this.snowsizerange) + this.snowminsize;
-						this.snow[i].style.fontSize = this.snow[i].size + 'px';
-						this.snow[i].style.color = this.snowcolor[this.randommaker(this.snowcolor.length)];
-						this.snow[i].style.zIndex = 1000;
-						this.snow[i].sink = this.sinkspeed * this.snow[i].size / 5;
-						if(this.snowingzone == 1) {
-							this.snow[i].posx = this.randommaker(this.marginright - this.snow[i].size)
-						}
-						if(this.snowingzone == 2) {
-							this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size)
-						}
-						if(this.snowingzone == 3) {
-							this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 4
-						}
-						if(this.snowingzone == 4) {
-							this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 2
-						}
-						this.snow[i].posy = this.randommaker(2 * this.marginbottom - this.marginbottom - 2 * this.snow[i].size);
-						this.snow[i].style.left = this.snow[i].posx + 'px';
-						this.snow[i].style.top = this.snow[i].posy + 'px';
-					}
-					this.movesnow();
+				if(this.snowingzone == 3) {
+					this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 4
 				}
-
-				Snow.prototype.movesnow = function() {
-					for(var i = 0; i <= this.snowmax; i++) {
-						this.crds[i] += this.x_mv[i];
-						this.snow[i].posy += this.snow[i].sink;
-						this.snow[i].style.left = this.snow[i].posx + this.lftrght[i] * Math.sin(this.crds[i]) + 'px';
-						this.snow[i].style.top = this.snow[i].posy + 'px';
-
-						if(this.snow[i].posy >= this.marginbottom - 2 * this.snow[i].size || parseInt(this.snow[i].style.left) > (this.marginright - 3 * this.lftrght[i])) {
-							if(this.snowingzone == 1) {
-								this.snow[i].posx = this.randommaker(this.marginright - this.snow[i].size)
-							}
-							if(this.snowingzone == 2) {
-								this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size)
-							}
-							if(this.snowingzone == 3) {
-								this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 4
-							}
-							if(this.snowingzone == 4) {
-								this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 2
-							}
-							this.snow[i].posy = 0;
-						}
-					}
-					var that = this;
-					var timer = window.setTimeout(function() {
-							that.movesnow();
-						},
-						50);
+				if(this.snowingzone == 4) {
+					this.snow[i].posx = this.randommaker(this.marginright / 2 - this.snow[i].size) + this.marginright / 2
 				}
-				Snow.prototype.createSnow = function() {
-					var body = document.getElementsByTagName('body')[0];
-					for(var i = 0; i <= this.snowmax; i++) {
-						var content = document.createElement("span");
-						content.id = 's' + i;
-						content.style.position = "absolute";
-						content.style.top = "-" + this.snowmaxsize;
-						content.innerHTML =this.snowletter;//new Array('*','seeyoubug','欲泪程雪','*')[parseInt(Math.random()*3)];
-						body.appendChild(content);
-					}
-				}
-				Snow.prototype.startSnow = function() {
-					this.createSnow();
-					if(this.browserok) {
-						this.initsnow();
-					}
-				}
-
-				Snow.create = function(options) {
-					return new Snow(options);
-				};
-
-				Snow.version = '1.0.1';
-				return Snow;
-			});
-
+				this.snow[i].posy = 0;
+			}
+		}
+		var that = this;
+		var timer = window.setTimeout(function() {
+				that.movesnow();
+			},
+			50);
+	}
+	Snow.prototype.createSnow = function() {
+		var body = document.getElementsByTagName('body')[0];
+		for(var i = 0; i <= this.snowmax; i++) {
+			var content = document.createElement("span");
+			content.id = 's' + i;
+			content.style.position = "absolute";
+			content.style.top = "-" + this.snowmaxsize;
+			content.innerHTML =this.snowletter;//new Array('*','seeyoubug','欲泪程雪','*')[parseInt(Math.random()*3)];
+			body.appendChild(content);
+		}
+	}
+	Snow.prototype.startSnow = function() {
+		this.createSnow();
+		if(this.browserok) {
+			this.initsnow();
+		}
+	}
+	Snow.create = function(options) {
+		return new Snow(options);
+	};
+	Snow.version = '1.0.1';
+	return Snow;
+});
 var snow = new Snow();
+// end snow effect
 
-// end-Snow effect
